@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>A Country to Love</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Noto+Serif+Armenian:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  /* a heavy bound book on dark basalt, framed like a carved khachkar; duduk underneath.
+     Single dark look by choice: basalt night, tuff-stone frame, apricot light, pomegranate accent. */
+  :root {
+    color-scheme: dark;
+    --basalt: #14110e;
+    --basalt-2: #221c17;
+    --tuff: #9a5f45;        /* Yerevan pink-orange tuff stone */
+    --tuff-dark: #5e3626;
+    --apricot: #e0a15e;     /* the flag's apricot */
+    --pomegranate: #8e2433;
+    --parchment: #eadcc4;
+    --ink: #e8d9c0;
+    --ink-soft: #a8957a;
+    --display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+    --armenian: "Noto Serif Armenian", "Cormorant Garamond", Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    overflow: hidden; color: var(--ink); font-family: var(--display);
+    background: radial-gradient(120% 80% at 50% 40%, var(--basalt-2), var(--basalt) 70%);
+    -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; touch-action: manipulation;
+  }
+  body::before { /* stone grain */
+    content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .18;
+    background-image: radial-gradient(rgba(255,240,220,.08) 1px, transparent 1.4px), radial-gradient(rgba(0,0,0,.5) 1px, transparent 1.6px);
+    background-size: 5px 5px, 7px 7px; background-position: 0 0, 2px 3px;
+  }
+  #viewport { position: fixed; inset: 0; cursor: pointer; overflow: hidden; }
+  #stage { position: absolute; left: 50%; top: 50%; width: 540px; height: 800px; transform-origin: center center; }
+  .float { position: absolute; top: 0; border-radius: 50%; background: var(--apricot); box-shadow: 0 0 6px 1px rgba(224,161,94,.6); will-change: transform; }
+
+  #title { position: absolute; left: 0; right: 0; top: 14px; text-align: center; font-family: var(--armenian); font-size: 22px; letter-spacing: .5em; color: var(--apricot); opacity: .8; padding-left: .5em; }
+
+  /* carved stone frame around the book (khachkar border) */
+  #frame { position: absolute; left: 14px; top: 46px; width: 512px; height: 632px; border-radius: 6px;
+    background: linear-gradient(160deg, var(--tuff), var(--tuff-dark));
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,.35), inset 0 0 0 9px rgba(224,161,94,.12), inset 0 0 0 10px rgba(0,0,0,.4), 0 30px 60px rgba(0,0,0,.6); }
+  #frame::before { content: ""; position: absolute; inset: 6px; border: 1px solid rgba(234,220,196,.25); border-radius: 3px; }
+  .knot { position: absolute; width: 22px; height: 22px; color: var(--parchment); opacity: .55; }
+
+  #book { position: absolute; left: 30px; top: 62px; width: 480px; height: 600px; }
+  #book-inner { position: absolute; inset: 0; perspective: 1900px; transform-style: preserve-3d; }
+  .edge { position: absolute; inset: 0; border-radius: 2px 6px 6px 2px; background: var(--parchment); border: 1px solid #b9a582; }
+  #shadow { position: absolute; left: 10px; right: -6px; bottom: -20px; height: 30px; background: radial-gradient(closest-side, rgba(0,0,0,.6), transparent); }
+  .page { position: absolute; inset: 0; transform-origin: 0 50%; transform-style: preserve-3d; }
+  .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 2px 6px 6px 2px; overflow: hidden; background: var(--parchment); }
+  .face img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .face.front::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 20px; background: linear-gradient(90deg, rgba(20,10,5,.45), transparent); }
+  .face.back { transform: rotateY(180deg); background: var(--parchment); }
+  .face.back::before { /* faint eternity sign printed on the back of each page */
+    content: "֍"; position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--armenian); font-size: 120px; color: rgba(142,36,51,.12); }
+  .shade { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; }
+
+  #hint { position: absolute; left: 0; right: 0; top: 706px; text-align: center; font-size: 30px; font-style: italic; letter-spacing: .04em; color: var(--parchment); transition: opacity .6s; }
+  #counter { position: absolute; left: 0; right: 0; top: 708px; text-align: center; font-size: 24px; letter-spacing: .2em; color: var(--ink-soft); font-variant-numeric: tabular-nums lining-nums; }
+  #again {
+    position: absolute; left: 50%; top: 742px; transform: translateX(-50%);
+    font: italic 600 24px var(--display); color: var(--parchment);
+    background: transparent; border: 1px solid var(--apricot); border-radius: 2px; padding: 4px 22px;
+    cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .4s;
+  }
+  #again.show { opacity: 1; pointer-events: auto; }
+  #credits { position: absolute; left: 0; right: 0; top: 784px; text-align: center; font-size: 17px; font-style: italic; color: var(--ink-soft); opacity: 0; pointer-events: none; transition: opacity .4s; }
+  #credits.show { opacity: 1; pointer-events: auto; }
+  #again:focus-visible, #sound:focus-visible { outline: 2px solid var(--apricot); outline-offset: 3px; }
+  #tap { position: absolute; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; border: 2px solid rgba(224,161,94,.9); background: rgba(224,161,94,.15); opacity: 0; pointer-events: none; }
+
+  #sound {
+    position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--apricot);
+    background: rgba(20,17,14,.8); color: var(--apricot); font-size: 20px; line-height: 1; cursor: pointer;
+    display: grid; place-items: center; padding: 0;
+  }
+  @media (prefers-reduced-motion: reduce) { .float { display: none; } }
+</style>
+</head>
+<body>
+<div id="viewport">
+  <div id="stage">
+    <div id="floats"></div>
+    <div id="title"></div>
+    <div id="frame">
+      <svg class="knot" style="left:9px;top:9px" viewBox="0 0 22 22"><path d="M11 1 21 11 11 21 1 11Z M11 6 16 11 11 16 6 11Z" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+      <svg class="knot" style="right:9px;top:9px" viewBox="0 0 22 22"><path d="M11 1 21 11 11 21 1 11Z M11 6 16 11 11 16 6 11Z" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+      <svg class="knot" style="left:9px;bottom:9px" viewBox="0 0 22 22"><path d="M11 1 21 11 11 21 1 11Z M11 6 16 11 11 16 6 11Z" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+      <svg class="knot" style="right:9px;bottom:9px" viewBox="0 0 22 22"><path d="M11 1 21 11 11 21 1 11Z M11 6 16 11 11 16 6 11Z" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+    </div>
+    <div id="book">
+      <div id="shadow"></div>
+      <div id="book-inner">
+        <div class="edge" style="transform:translate(7px,7px)"></div>
+        <div class="edge" style="transform:translate(4.5px,4.5px)"></div>
+        <div class="edge" style="transform:translate(2px,2px)"></div>
+        <div id="pages"></div>
+      </div>
+    </div>
+    <div id="hint">tap to begin</div>
+    <div id="counter"></div>
+    <button id="again" type="button">read again</button>
+    <a id="credits" href="credits.html" target="_blank" rel="noopener">photo &amp; music credits</a>
+    <div id="tap"></div>
+  </div>
+</div>
+<audio id="song" src="song.mp3" preload="auto" loop autoplay></audio>
+<button id="sound" type="button" aria-label="Mute music">♪</button>
+
+<script>
+(() => {
+  const V = "20261017q"; // bump after any slide change so phones don't show old cached photos
+  const SLIDES = Array.from({ length: 18 }, (_, i) => `slides/slide-${String(i + 1).padStart(2, "0")}.jpg?v=${V}`);
+  const N = SLIDES.length, LAST = N - 1;
+
+  // ---- music: Djivan Gasparyan, duduk. Plays on open where the browser allows it; otherwise the first
+  // touch anywhere starts it (phones block sound until the viewer interacts with the page)
+  const song = document.getElementById("song"), soundBtn = document.getElementById("sound");
+  song.volume = 0.8;
+  let muted = false;
+  const showSound = () => { soundBtn.textContent = muted ? "✕" : "♪"; soundBtn.setAttribute("aria-label", muted ? "Play music" : "Mute music"); };
+  function startMusic() { if (!muted && song.paused) song.play().catch(() => {}); }
+  startMusic();
+  // phones block sound until the first touch, so unless the song already started on load,
+  // the first tap only starts the music (and stays on slide 1); later taps turn pages
+  let touched = false, playedOnLoad = false, firstTapDone = false;
+  song.addEventListener("playing", () => { if (!touched) playedOnLoad = true; document.getElementById("hint").textContent = "tap to turn the page"; });
+  for (const ev of ["pointerdown", "touchstart", "keydown"]) addEventListener(ev, (e) => { touched = true; if (e.target !== soundBtn) startMusic(); }, { passive: true });
+  soundBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    muted = !song.paused;
+    if (muted) song.pause(); else song.play().catch(() => {});
+    showSound();
+  });
+
+  // ---- pages
+  const pagesEl = document.getElementById("pages");
+  const pages = SLIDES.map((src) => {
+    const p = document.createElement("div");
+    p.className = "page";
+    p.innerHTML = `<div class="face front"><img data-src="${src}" alt="" decoding="async"><div class="shade"></div></div><div class="face back"></div>`;
+    pagesEl.appendChild(p);
+    return { el: p, shade: p.querySelector(".shade"), img: p.querySelector("img") };
+  });
+  // iPhones crash ("A problem repeatedly occurred") if all 40 photos sit decoded in 3D layers at once,
+  // so only the pages around the current one exist on screen and hold their photo
+  const BLANK = "data:image/gif;base64,R0lGODlhAQABAAAAACw=";
+  let windowAt = -99;
+  function manage(cur) {
+    if (cur === windowAt) return;
+    windowAt = cur;
+    pages.forEach((pg, i) => {
+      const near = i >= cur - 1 && i <= cur + 3, keep = i >= cur - 2 && i <= cur + 5;
+      if (near && pg.img.dataset.on !== "1") { pg.img.src = pg.img.dataset.src; pg.img.dataset.on = "1"; }
+      else if (!keep && pg.img.dataset.on === "1") { pg.img.src = BLANK; pg.img.dataset.on = ""; }
+      if (i < cur - 1 || i > cur + 2) pg.el.style.display = "none";
+    });
+  }
+  manage(0);
+
+  // ---- slow embers drifting up (candle smoke at Tsitsernakaberd, not confetti)
+  const floatsEl = document.getElementById("floats");
+  const FLOATS = Array.from({ length: 14 }, (_, i) => {
+    const d = document.createElement("div");
+    d.className = "float";
+    const x = (i * 97) % 540, s = 2 + (i % 3);
+    d.style.left = x + "px"; d.style.width = d.style.height = s + "px";
+    floatsEl.appendChild(d);
+    return { el: d, phase: i * 0.77, speed: 9 + (i % 5) * 3 };
+  });
+  const $ = (id) => document.getElementById(id);
+  const tapEl = $("tap"), counter = $("counter"), again = $("again"), hint = $("hint");
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+  function render(t, flip, tap) {
+    for (const f of FLOATS) { const y = 820 - ((t * f.speed + f.phase * 140) % 860); f.el.style.transform = `translate(${Math.sin(t * 0.3 + f.phase) * 14}px, ${y}px)`; f.el.style.opacity = Math.max(0, Math.sin(((y + 40) / 860) * Math.PI)) * 0.55; }
+    manage(Math.floor(flip));
+    for (let i = Math.max(0, Math.floor(flip) - 1); i <= Math.min(LAST, Math.floor(flip) + 2); i++) {
+      const p = clamp(flip - i), { el, shade } = pages[i];
+      // a fully turned page is removed, not just hidden: Chrome/Safari kept painting hidden 3D pages
+      if (p >= 1) { el.style.display = "none"; continue; }
+      el.style.display = "";
+      el.style.transform = `translateZ(${Math.sin(p * Math.PI) * 30}px) rotateY(${-p * 178}deg)`;
+      el.style.opacity = p > 0.55 ? 1 - (p - 0.55) / 0.45 : 1;
+      el.style.zIndex = p > 0 ? N + 2 : N - i;
+      shade.style.opacity = p * 0.35;
+    }
+    const shown = Math.round(flip);
+    counter.textContent = flip > 0.05 ? `${shown + 1} / ${N}` : "";
+    hint.style.opacity = flip > 0.05 ? 0 : 0.75 + 0.25 * Math.sin(t * 4);
+    again.classList.toggle("show", flip > LAST - 0.05);
+    document.getElementById("credits").classList.toggle("show", flip > LAST - 0.05);
+    if (tap) {
+      tapEl.style.left = tap.x + "px"; tapEl.style.top = tap.y + "px";
+      const a = clamp(tap.age / 0.45);
+      tapEl.style.opacity = a < 1 ? (1 - a) * 0.95 : 0;
+      tapEl.style.transform = `scale(${0.6 + a * 0.9})`;
+    } else tapEl.style.opacity = 0;
+  }
+
+  function fit() {
+    const r = $("viewport").getBoundingClientRect();
+    const sc = Math.min(r.width / 540, r.height / 820);
+    $("stage").style.transform = `translate(-50%, -50%) scale(${sc})`;
+  }
+  addEventListener("resize", fit); fit();
+
+  const state = { flip: 0 };
+  let tween = null, tap = null;
+  const tweenTo = (to, dur) => { tween = { from: state.flip, to, start: performance.now(), dur: dur * 1000 }; };
+  const target = () => Math.round(tween ? tween.to : state.flip);
+  function next() { const t = Math.min(LAST, target() + 1); if (t !== target()) tweenTo(t, 0.75); }
+  function prev() { const t = target(); if (t > 0) tweenTo(t - 1, 0.6); }
+  document.getElementById("credits").addEventListener("click", (e) => e.stopPropagation());
+  again.addEventListener("click", (e) => { e.stopPropagation(); tweenTo(0, 1.4); });
+  $("viewport").addEventListener("click", (e) => {
+    startMusic();
+    if (!playedOnLoad && !firstTapDone) { firstTapDone = true; hint.textContent = "tap to turn the page"; return; }
+    const r = $("stage").getBoundingClientRect();
+    const sx = ((e.clientX - r.left) / r.width) * 540, sy = ((e.clientY - r.top) / r.height) * 800;
+    tap = { x: sx, y: sy, born: performance.now() };
+    if (sx < 150) prev(); else next();
+  });
+  addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight" || e.key === " ") { startMusic(); if (!playedOnLoad && !firstTapDone) { firstTapDone = true; return; } next(); }
+    if (e.key === "ArrowLeft") prev();
+  });
+
+  const t0 = performance.now();
+  function loop(now) {
+    if (tween) {
+      const a = clamp((now - tween.start) / tween.dur);
+      state.flip = a >= 1 ? tween.to : lerp(tween.from, tween.to, ease(a));
+      if (a >= 1) tween = null;
+    }
+    render((now - t0) / 1000, state.flip, tap ? { x: tap.x, y: tap.y, age: (now - tap.born) / 1000 } : null);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
